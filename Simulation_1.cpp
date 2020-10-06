@@ -2457,8 +2457,11 @@ void run_simulation_function(){
 
 int main(int argc, const char * argv[]) {
     srand ( time(NULL) );
-    //cout<<"This is the current location"<<endl;
-    run_simulation_function();
+    cout<<"This is the current location"<<endl;
+    vector<double> Ttemp;
+    Ttemp.push_back(10);
+    cout<<Ttemp.at(0)<<endl;
+//    run_simulation_function();
     return 0;
 }
 
