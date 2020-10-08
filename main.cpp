@@ -2459,67 +2459,67 @@ int main(int argc, const char * argv[]) {
     srand ( time(NULL) );
     //cout<<"Lets test it"<<endl;
     //run_simulation_function();
-    double x_location = (((double) rand() / (RAND_MAX)) + 1 )*10;
-    double y_location = (((double) rand() / (RAND_MAX)) + 1 )*10;
-    double finial_x = (((double) rand() / (RAND_MAX)) + 1 )*10;
-    double finial_y = (((double) rand() / (RAND_MAX)) + 1 )*10;
-    // int headsOrTails = rand();
-    vector<int> temp;
-    for (int i = 0; i < 4; i++)
+    for (int temp = 0; temp < 10; temp++)
     {
-        int n = rand() % 2;
-        if (i == 0)
-        {
-            if (n == 1)
+            double x_location = (((double) rand() / (RAND_MAX)) + 1 )*10;
+            double y_location = (((double) rand() / (RAND_MAX)) + 1 )*10;
+            double finial_x = (((double) rand() / (RAND_MAX)) + 1 )*10;
+            double finial_y = (((double) rand() / (RAND_MAX)) + 1 )*10;
+            // int headsOrTails = rand();
+            for (int i = 0; i < 4; i++)
             {
-                x_location = - x_location;
+                int n = rand() % 2;
+                if (i == 0)
+                {
+                    if (n == 1)
+                    {
+                        x_location = - x_location;
+                    }
+                }
+                if (i == 1)
+                {
+                    if (n == 1)
+                    {
+                        y_location = - y_location;
+                    }
+                }
+                if (i == 2)
+                {
+                    if (n == 1)
+                    {
+                        finial_x = - finial_x ;
+                    } 
+                }
+                if (i == 3)
+                {
+                    if (n == 1)
+                    {
+                        finial_y = - finial_y;
+                    }
+                }
+                
             }
-        }
-        if (i == 1)
-        {
-            if (n == 1)
+            
+            cout<<x_location<<"\t"<<y_location<<endl;
+            cout<<finial_x<<"\t"<<finial_y<<endl;
+            if ((x_location <= finial_x) && (y_location < finial_y))
             {
-                y_location = - y_location;
+                cout<<"First quater"<<endl;
+            }else if ((x_location > finial_x) && (y_location <= finial_y))
+            {
+                cout<<"Second quater"<<endl;
+            }else if ((x_location < finial_x) && (y_location >= finial_y))
+            {
+                cout<<"Fourth quater"<<endl;
+            }else
+            {
+                cout<<"Third quater"<<endl;
             }
-        }
-        if (i == 2)
-        {
-            if (n == 1)
-            {
-                finial_x = - finial_x ;
-            } 
-        }
-        if (i == 3)
-        {
-            if (n == 1)
-            {
-                finial_y = - finial_y;
-            }
-        }
-        
+            
     }
     
-    cout<<x_location<<"\t"<<y_location<<endl;
-    cout<<finial_x<<"\t"<<finial_y<<endl;
-    if (x_location <= finial_x)
-    {
-        if (y_location <= finial_y)
-        {
-            
-        }else
-        {
-            
-        }
-    }else if (y_location <= finial_y)
-    {
-        if (x_location <= finial_x)
-        {
-            
-        }else
-        {
-            
-        }
-    }
+
+    
     
     
     
