@@ -398,8 +398,7 @@ public:
     void sense_new_rover(double x,double y);
     void sense_new_target(double x, double y);
     void sense_new_ob(double x, double y);
-    void sense_new_target_1(double x, double y);
-    int quad_value(double difference_x, double difference_y);
+    int quad_value(double x_1, double y_1, double x_2, double y_2);
     void reset_sensor_value();
     void set_sensor_zero();
 };
@@ -429,33 +428,32 @@ void new_rover::set_sensor_zero(){
     }
 }
 
-int new_rover::quad_value(double difference_x, double difference_y){
-    if (difference_x >= 0 && difference_y  >= 0) {
-        
-    }else if (difference_x >= 0 && difference_y < 0){
-        return 4;
-    }else if (difference_x <= 0 && difference_y >0){
+int new_rover::quad_value(double x_1, double y_1, double x_2, double y_2){
+    //x_1 y_1 is rover
+    //x_2 y_2 is other
+    if ((x_1 <= x_2) && (y_1 < y_2)){
+        return 1;
+    }else if ((x_1 > x_2) && (y_1 <= y_2)){
         return 2;
-    }else if(difference_x <= 0 && difference_y <0){
-        return 3;
+    }else if ((x_1 < x_2) && (y_1 >= y_2)){
+        return 4;
     }
-    
-    return 2;
+    return 3;
 }
 
 void new_rover::sense_new_rover(double x, double y){
     double difference_x = x-x_location_new;
     double difference_y = y-y_location_new;
     double distance_rover = sqrt(pow(difference_x, 2)+pow(difference_y, 2)+pow(difference_y, 2));
-    int quad = quad_value(difference_x, difference_y);
+    int quad = quad_value(x_location_new, y_location_new, x, y);
     if (quad == 1) {
         sensor.at(0) += distance_rover;
     }else if (quad == 2){
-        sensor.at(4) += distance_rover;
+        sensor.at(3) += distance_rover;
     }else if (quad == 3){
-        sensor.at(8) += distance_rover;
+        sensor.at(6) += distance_rover;
     }else{
-        sensor.at(12) +=distance_rover;
+        sensor.at(9) +=distance_rover;
     }
     
 }
@@ -464,15 +462,15 @@ void new_rover::sense_new_target(double x, double y){
     double difference_x = x - x_location_new;
     double difference_y = y - y_location_new;
     double distance_rover = sqrt(pow(difference_x, 2)+pow(difference_y, 2)+pow(0, 2));
-    int quad = quad_value(difference_x, difference_y);
+    int quad = quad_value(x_location_new, y_location_new, x, y);
     if (quad == 1) {
         sensor.at(1) += distance_rover;
     }else if (quad == 2){
-        sensor.at(5) += distance_rover;
+        sensor.at(4) += distance_rover;
     }else if (quad == 3){
-        sensor.at(9) += distance_rover;
+        sensor.at(7) += distance_rover;
     }else{
-        sensor.at(13) +=distance_rover;
+        sensor.at(10) +=distance_rover;
     }
 }
 
@@ -480,34 +478,18 @@ void new_rover::sense_new_ob(double x, double y){
     double difference_x = x-x_location_new;
     double difference_y = y-y_location_new;
     double distance_rover = sqrt(pow(difference_x, 2)+pow(difference_y, 2)+pow(0, 2));
-    int quad = quad_value(difference_x, difference_y);
+    int quad = quad_value(x_location_new, y_location_new, x, y);
     if (quad == 1) {
         sensor.at(2) += distance_rover;
     }else if (quad == 2){
-        sensor.at(6) += distance_rover;
+        sensor.at(5) += distance_rover;
     }else if (quad == 3){
-        sensor.at(10) += distance_rover;
+        sensor.at(8) += distance_rover;
     }else{
-        sensor.at(14) +=distance_rover;
+        sensor.at(11) +=distance_rover;
     }
 }
 
-void new_rover::sense_new_target_1(double x, double y){
-    double difference_x = x-x_location_new;
-    double difference_y = y-y_location_new;
-    
-    double distance_rover = sqrt(pow(difference_x, 2)+pow(difference_y, 2)+pow(0, 2));
-    int quad = quad_value(difference_x, difference_y);
-    if (quad == 1) {
-        sensor.at(3) += distance_rover;
-    }else if (quad == 2){
-        sensor.at(7) += distance_rover;
-    }else if (quad == 3){
-        sensor.at(11) += distance_rover;
-    }else{
-        sensor.at(15) +=distance_rover;
-    }
-}
 
 
 /********************************************************
@@ -714,9 +696,11 @@ void simulation_team(vector<population>* teams, vector<Environment>* p_environme
                     }
                     
                     //sense target location
-                    teams->at(population_number).teamRover.at(rover).sense_new_target(teams->at(population_number).teamRover.at(rover).target_x, teams->at(population_number).teamRover.at(rover).target_y);
-                    
-                    
+                    for (int target_number = 0; target_number < p_environment->at(0).individualPOI.size(); target_number++)
+                    {
+                        teams->at(population_number).teamRover.at(rover).sense_new_target(p_environment->at(0).individualObstacles.at(target_number).x_location, p_environment->at(0).individualObstacles.at(target_number).y_location);
+                    }
+                
                     //sense obstacles
                     for (int obstacle = 0; obstacle< p_environment->at(0).individualObstacles.size(); obstacle++) {
                         teams->at(population_number).teamRover.at(rover).sense_new_ob(p_environment->at(0).individualObstacles.at(obstacle).x_location, p_environment->at(0).individualObstacles.at(obstacle).y_location);
@@ -736,7 +720,6 @@ void simulation_team(vector<population>* teams, vector<Environment>* p_environme
                     //Out put from neural network
                     double dx = teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).outputvaluesNN.at(0);
                     double dy = teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).outputvaluesNN.at(1);
-                    double dz = teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).outputvaluesNN.at(2);
                     
                     //Here the movement of rover has to happen
                     double temp_current_x = teams->at(population_number).teamRover.at(rover).x_location_new;
