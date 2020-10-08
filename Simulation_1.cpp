@@ -811,18 +811,15 @@ void distance_team(vector<population>* teams, double distance_between_rover, dou
                 
                 
                 //distance to target
-                for (int index = 0; index < teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates.size(); index++)
+                for (int  count_target = 0; count_target < p_environment->at(0).individualPOI.size(); count_target++)
                 {
-                    teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).target_distance.push_back(0);
+                    for (int index = 0; index < teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates.size(); index++)
+                    {
+                        teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).target_distance.push_back(0);
+                    }
+                    teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).shortest_target_distance = *std::min_element(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).target_distance.begin(), teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).target_distance.end());
                 }
-                                
                 
-                //distance to target_1
-//                for (int index = 0; index < teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates.size(); index++) {
-//                teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).target_distance_1.push_back(cal_distance(teams->at(population_number).teamRover.at(rover).target_x_1, teams->at(population_number).teamRover.at(rover).target_y_1, teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates.at(index), teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).y_coordinates.at(index)));
-//                }
-                
-                teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).shortest_target_distance = *std::min_element(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).target_distance.begin(), teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).target_distance.end());
                  //teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).shortest_target_distance_1 = *std::min_element(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).target_distance_1.begin(), teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).target_distance_1.end());
                 
                 
