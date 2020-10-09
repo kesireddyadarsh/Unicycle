@@ -814,74 +814,65 @@ void distance_team(vector<population>* teams, double distance_between_rover, dou
                     {
                         teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).target_distance.push_back(cal_distance(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates.at(index),teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).y_coordinates.at(index), p_environment->at(0).individualPOI.at(count_target).x_position_poi, p_environment->at(0).individualPOI.at(count_target).y_position_poi));
                     }
-                    teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).shortest_target_distance += *std::min_element(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).target_distance.begin(), teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).target_distance.end());
-                
+                    teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).shortest_target_distance += *std::min_element(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).target_distance.begin(), teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).target_distance.end());                
                 }
                 
-                
-
-
                 //each obstacle distance
                 for (int index = 0 ; index < p_location_obstacle->size(); index++) {
-                    vector<double> temp_distance;
                     //Point generator
                     for (int x = 0; x < teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates.size(); x++) {
-                        double temp_cal_distance = cal_distance(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates.at(x), teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).y_coordinates.at(x),teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).z_coordinates.at(x), p_location_obstacle->at(index).at(0), p_location_obstacle->at(index).at(1),p_location_obstacle->at(index).at(2));
-                        temp_distance.push_back(temp_cal_distance);
-                        
-                        //Punishment
-                        if (temp_cal_distance < radius_of_obstacle) {
-                            teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_obstacle += 1000;
-                        }
-                    }
-                    //unicycle
-                    for (int x = 0; x < teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates_unicycle.size(); x++) {
-                        double temp_cal_distance = cal_distance(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates_unicycle.at(x), teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).y_coordinates_unicycle.at(x),0, p_location_obstacle->at(index).at(0), p_location_obstacle->at(index).at(1),p_location_obstacle->at(index).at(2));
-                        temp_distance.push_back(temp_cal_distance);
-                        
-                        //Punishment
-                        if (temp_cal_distance < radius_of_obstacle) {
-                            teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_obstacle += 1000;
+                        for (int obstalce_count = 0; obstalce_count < p_environment->at(0).individualObstacles.size(); obstalce_count++)
+                        {
+                            double temp_cal_distance = cal_distance(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates.at(x), teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).y_coordinates.at(x),p_environment->at(0).individualObstacles.at(obstalce_count).x_location,p_environment->at(0).individualObstacles.at(obstalce_count).y_location);
+                            if (temp_cal_distance < p_environment->at(0).individualObstacles.at(obstalce_count).radius)
+                            {
+                                teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_obstacle += 1000;
+                            }       
                         }
                     }
 
-                    teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).obstacle_distance.push_back(temp_distance);
-                    temp_distance.clear();
+                    //unicycle
+                    for (int x = 0; x < teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates_unicycle.size(); x++) {
+                        for (int obstalce_count = 0; obstalce_count < p_environment->at(0).individualObstacles.size(); obstalce_count++)
+                        {
+                            double temp_cal_distance = cal_distance(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates_unicycle.at(x), teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).y_coordinates_unicycle.at(x),p_environment->at(0).individualObstacles.at(obstalce_count).x_location,p_environment->at(0).individualObstacles.at(obstalce_count).y_location);
+                            if (temp_cal_distance < p_environment->at(0).individualObstacles.at(obstalce_count).radius)
+                            {
+                                teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_obstacle += 1000;
+                            } 
+                        }
+                    }
                 }
                 
                 
                 //Hitting other agents
-                // for (int other_rover = 0 ; other_rover < teams->at(population_number).path_numbers.at(team_value).size(); other_rover++) {
-                //     if (rover != other_rover) {
-                //         vector<double> temp_distance;
-                //         for (int index = 0 ; index < teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates.size(); index++) {
-                //             double temp_distance_cal = cal_distance(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates.at(index), teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).y_coordinates.at(index),teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).z_coordinates.at(index), teams->at(population_number).teamRover.at(other_rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(other_rover)).x_coordinates.at(index), teams->at(population_number).teamRover.at(other_rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(other_rover)).y_coordinates.at(index),teams->at(population_number).teamRover.at(other_rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(other_rover)).z_coordinates.at(index));
-                //             temp_distance.push_back(temp_distance_cal);
-                //             if (temp_distance_cal < safe_distance_between_rover){
-                //                 teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_agents_summation += 1000;
-                //             }else if (temp_distance_cal > (safe_distance_between_rover+1.0)){
-                //                 teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_agents_summation += 1000;
-                //             }
-                //         }
-                //         teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).other_rover_paths.push_back(temp_distance);
+                for (int other_rover = 0 ; other_rover < teams->at(population_number).path_numbers.at(team_value).size(); other_rover++) {
+                    if (rover != other_rover) {
+                        vector<double> temp_distance;
+                        for (int index = 0 ; index < teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates.size(); index++) {
+                            double temp_distance_cal = cal_distance(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates.at(index), teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).y_coordinates.at(index), teams->at(population_number).teamRover.at(other_rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(other_rover)).x_coordinates.at(index), teams->at(population_number).teamRover.at(other_rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(other_rover)).y_coordinates.at(index));
+                            temp_distance.push_back(temp_distance_cal);
+                            if (temp_distance_cal < safe_distance_between_rover){
+                                teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_agents_summation += 1000;
+                            }else if (temp_distance_cal > (safe_distance_between_rover+1.0)){
+                                teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_agents_summation += 1000;
+                            }
+                        }
+                        teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).other_rover_paths.push_back(temp_distance);
 
-                //         vector<double> temp_distance_new;
-                //         for (int index = 0 ; index < teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates_unicycle.size(); index++) {
-                //             double temp_distance_cal = cal_distance(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates_unicycle.at(index), teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).y_coordinates_unicycle.at(index), 0, teams->at(population_number).teamRover.at(other_rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(other_rover)).x_coordinates_unicycle.at(index), teams->at(population_number).teamRover.at(other_rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(other_rover)).y_coordinates_unicycle.at(index), 0);
-                //             temp_distance_new.push_back(temp_distance_cal);
-                //             if (temp_distance_cal < safe_distance_between_rover){
-                //                 teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_agents_summation += 1000;
-                //             }else if (temp_distance_cal > (safe_distance_between_rover+1.0)){
-                //                 teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_agents_summation += 1000;
-                //             }
-                //         }
-                //         teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).other_rover_paths.push_back(temp_distance_new);
-
-                //     }
-                // }
-                
-                
-                
+                        vector<double> temp_distance_new;
+                        for (int index = 0 ; index < teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates_unicycle.size(); index++) {
+                            double temp_distance_cal = cal_distance(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates_unicycle.at(index), teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).y_coordinates_unicycle.at(index), teams->at(population_number).teamRover.at(other_rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(other_rover)).x_coordinates_unicycle.at(index), teams->at(population_number).teamRover.at(other_rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(other_rover)).y_coordinates_unicycle.at(index));
+                            temp_distance_new.push_back(temp_distance_cal);
+                            if (temp_distance_cal < safe_distance_between_rover){
+                                teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_agents_summation += 1000;
+                            }else if (temp_distance_cal > (safe_distance_between_rover+1.0)){
+                                teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_agents_summation += 1000;
+                            }
+                        }
+                        teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).other_rover_paths.push_back(temp_distance_new);
+                    }
+                }
             }
             
            
@@ -1003,13 +994,13 @@ void distance_team(vector<population>* teams, double distance_between_rover, dou
         }
     }
     
-    for (int team_number = 0 ; team_number < teams->size(); team_number++) {
-        for (int rover = 0 ; rover < teams->at(team_number).teamRover.size(); rover++) {
-            for (int neural = 0 ; neural < teams->at(team_number).teamRover.at(rover).new_network.size(); neural++) {
-                assert(teams->at(team_number).teamRover.at(rover).new_network.at(neural).fintess_values.size() == number_of_objectives);
-            }
-        }
-    }
+    // for (int team_number = 0 ; team_number < teams->size(); team_number++) {
+    //     for (int rover = 0 ; rover < teams->at(team_number).teamRover.size(); rover++) {
+    //         for (int neural = 0 ; neural < teams->at(team_number).teamRover.at(rover).new_network.size(); neural++) {
+    //             assert(teams->at(team_number).teamRover.at(rover).new_network.at(neural).fintess_values.size() == number_of_objectives);
+    //         }
+    //     }
+    // }
     
     
 }
