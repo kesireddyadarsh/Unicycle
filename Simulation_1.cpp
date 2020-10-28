@@ -75,6 +75,7 @@ public:
 class Obstacles{
 public:
     double x_location, y_location, radius;
+    int type_of_obstacle; // 0 -- Circle; 1 -- Rectangle; 2 -- Sqaure; 3 -- Triangle; 4 -- Star
     vector<double> x_location_vec;
     vector<double> y_location_vec;
 };
@@ -487,7 +488,6 @@ void new_rover::sense_new_ob(double x, double y){
         sensor.at(11) +=distance_rover;
     }
 }
-
 
 
 /********************************************************
@@ -2366,7 +2366,7 @@ void print_values_to_file(int generation, vector<population>* teams , int number
 }
 
 
-void create_environment( int number_of_obstacles, int number_of_objectives, vector<Environment>* p_en_vector){
+void create_environment( int number_of_obstacles, int number_of_poi, vector<Environment>* p_en_vector){
     // vector<POI> individualPOI;
     // vector<Obstacles> individualObstacles;
     for (int obstacle_count = 0; obstacle_count < number_of_obstacles; obstacle_count++)
@@ -2425,8 +2425,9 @@ void create_environment( int number_of_obstacles, int number_of_objectives, vect
             p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
         }
     }
+    assert(p_en_vector->at(0).individualObstacles.size() == number_of_obstacles);
 
-    for (int target = 0; target < number_of_objectives; target++)
+    for (int target = 0; target < number_of_poi; target++)
     {
         POI pl;
         p_en_vector->at(0).individualPOI.push_back(pl);
@@ -2457,7 +2458,8 @@ void create_environment( int number_of_obstacles, int number_of_objectives, vect
             p_en_vector->at(0).individualPOI.at(target).radius = 3;
         }
     }
-       
+
+    assert(p_en_vector->at(0).individualPOI.size() == number_of_poi);   
 }
 
 void test_bed(vector<Environment>* p_environment){
@@ -2472,6 +2474,10 @@ void test_bed(vector<Environment>* p_environment){
     
 }
 
+/****************************************************************************
+ * 1. Not hitting obstacles 2. Not hitting other agents 3. Reaching all target location
+ * ****************************************************************/
+
 void run_simulation_function(){
     
     int pop_size = 1;
@@ -2479,10 +2485,11 @@ void run_simulation_function(){
     int number_of_routes = 2;
     double distance_between_rover = 2.0;
     double safe_distance_between_rover = 1.0;
-    double size_of_rover = 1.0;
-    int number_of_obstacles = 10;
-    int number_of_objectives = 5;
-    double radius_of_obstacle = 5.0;
+    double size_of_rover = 0.5;
+    int number_of_obstacles = 12;
+    int number_of_objectives = 3;
+    int number_of_poi = 7; 
+    // double radius_of_obstacle = 5.0;
     
     //Create teams
     vector<population> teams;
@@ -2525,7 +2532,7 @@ void run_simulation_function(){
     
     int number_of_generations = 1;
 
-    create_environment(number_of_obstacles, number_of_objectives, p_en_vector );
+    create_environment(number_of_obstacles, number_of_poi, p_en_vector );
     // Prints the environment
     /*
     for (int temp = 0; temp < p_en_vector->size(); temp++)
@@ -2553,7 +2560,7 @@ void run_simulation_function(){
         initial_team(p_teams, p_coordinates_stat);
         simulation_team(p_teams, p_en_vector, generation, number_of_obstacles, p_coordinates_stat, distance_between_rover,number_of_routes, number_of_rover);
         print_values_to_file(generation, p_teams, number_of_generations, p_en_vector);
-        distance_team(p_teams, distance_between_rover, safe_distance_between_rover, radius_of_obstacle, p_location_obstacle, number_of_objectives , p_en_vector, size_of_rover);
+        // distance_team(p_teams, distance_between_rover, safe_distance_between_rover, radius_of_obstacle, p_location_obstacle, number_of_objectives , p_en_vector, size_of_rover);
         // normalization(p_teams, number_of_objectives);
         
         
