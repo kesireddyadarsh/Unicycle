@@ -211,6 +211,8 @@ public:
     vector<double> x_coordinates_unicycle;
     vector<double> y_coordinates_unicycle;
     
+    double size_of_rover = 0.5;
+
     vector<double> theta_unicycle;
     vector<double> omega_unicycle;
     
@@ -542,8 +544,6 @@ void scalarization(vector<new_rover> teamRover,int rover){
     
 }
 
-
-
 /********************************************************
  This function  is to calculate distance between two points
  ********************************************************/
@@ -556,7 +556,6 @@ double cal_distance(double x1, double y1, double x2, double y2){
 /***********************************************************
  This is to create a team
  ***********************************************************/
-
 void create_team(vector<population>* teams,int number_of_rovers,int number_of_routes,int generation){
     for (int team_number = 0; team_number<teams->size(); team_number++) {
         for (int rover =0; rover < teams->at(team_number).teamRover.size(); rover++) {
@@ -573,6 +572,30 @@ void create_team(vector<population>* teams,int number_of_rovers,int number_of_ro
     }
 }
 
+/******************************************************
+ * Saves team numbers in path_numbers
+ * **************************************************/
+
+void save_team_numbers(vector<population>* teams,int generation,int number_of_rovers, int number_of_routes){
+    for (int population_number = 0 ; population_number < teams->size();population_number++) {
+        teams->at(population_number).path_numbers.clear();
+        for (int team_value = 0 ; team_value < number_of_routes; team_value++) {
+            vector<int> temp_team;
+            for (int rover = 0; rover < number_of_rovers; rover++) {
+                for (int neural_network = 0 ; neural_network < number_of_routes; neural_network++) {
+                    if (team_value == teams->at(population_number).teamRover.at(rover).new_network.at(neural_network).team_number) {
+                        temp_team.push_back(neural_network);
+                        break;
+                    }
+                }
+            }
+            teams->at(population_number).path_numbers.push_back(temp_team);
+            assert(temp_team.size() == number_of_rovers);
+        }
+        assert(teams->at(population_number).path_numbers.size() == number_of_routes);
+    }
+    
+}
 
 /********************************************************
  This function initialize all the environment
@@ -590,7 +613,6 @@ void initial_team(vector<population>* teams, vector<vector<double>>* p_stat){
 
     }
 }
-
 
 /**************************************************************************************************
  * Calculates the time taken for each rover
@@ -664,8 +686,6 @@ void unicycle_movement(vector<population>* teams, int population_number, int  te
     }
     
 }
-
-
 
 /*******************************************************
  This function runs through each simulation
@@ -772,7 +792,6 @@ void simulation_team(vector<population>* teams, vector<Environment>* p_environme
     }
 }
 
-
 /********************************************************
  This function is to check if both x_1 and x_2 are in same coordinates.
  ********************************************************/
@@ -795,7 +814,7 @@ bool check_quad(double x_1, double x_2){
  3. Distance to each obstacle
  ********************************************************/
 
-void distance_team(vector<population>* teams, double distance_between_rover, double safe_distance_between_rover, double radius_of_obstacle, vector<vector<double>>* p_location_obstacle,int number_of_objectives,vector<Environment>* p_environment, double size_of_rover){
+void distance_team(vector<population>* teams, double distance_between_rover, double safe_distance_between_rover, vector<vector<double>>* p_location_obstacle,int number_of_objectives,vector<Environment>* p_environment, double size_of_rover){
     for (int population_number = 0 ; population_number < teams->size(); population_number++) {
         for (int team_value = 0 ; team_value < teams->at(population_number).path_numbers.size(); team_value++) {
             for (int rover = 0 ; rover < teams->at(population_number).path_numbers.at(team_value).size(); rover++) {
@@ -846,7 +865,6 @@ void distance_team(vector<population>* teams, double distance_between_rover, dou
                     }
                 }
                 
-                
                 //Hitting other agents
                 for (int other_rover = 0 ; other_rover < teams->at(population_number).path_numbers.at(team_value).size(); other_rover++) {
                     if (rover != other_rover) {
@@ -889,15 +907,10 @@ void distance_team(vector<population>* teams, double distance_between_rover, dou
 //                         vector<double> ba;
 //                         double dot_pa_ba = 0.0,dot_ba_ba = 0.0;
 //                         pa.push_back(teams->at(population_number).teamRover.at(other_rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(other_rover)).x_coordinates.at(time_step) - teams->at(population_number).teamRover.at(0).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(0)).x_coordinates.at(time_step));
-                        
 //                         pa.push_back(teams->at(population_number).teamRover.at(other_rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(other_rover)).y_coordinates.at(time_step) - teams->at(population_number).teamRover.at(0).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(0)).y_coordinates.at(time_step));
-                        
-//                         pa.push_back(teams->at(population_number).teamRover.at(other_rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(other_rover)).z_coordinates.at(time_step) - teams->at(population_number).teamRover.at(0).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(0)).z_coordinates.at(time_step));
 //                         ba.push_back(teams->at(population_number).teamRover.at(teams->at(population_number).teamRover.size()-1).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(teams->at(population_number).path_numbers.at(team_value).size()-1)).x_coordinates.at(time_step) - teams->at(population_number).teamRover.at(0).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(0)).x_coordinates.at(time_step));
 //                         ba.push_back(teams->at(population_number).teamRover.at(teams->at(population_number).teamRover.size()-1).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(teams->at(population_number).path_numbers.at(team_value).size()-1)).y_coordinates.at(time_step) - teams->at(population_number).teamRover.at(0).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(0)).y_coordinates.at(time_step));
-//                         ba.push_back(teams->at(population_number).teamRover.at(teams->at(population_number).teamRover.size()-1).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(teams->at(population_number).path_numbers.at(team_value).size()-1)).z_coordinates.at(time_step) - teams->at(population_number).teamRover.at(0).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(0)).z_coordinates.at(time_step));
-                        
-                        
+                                                
 //                         for (int objective = 0 ; objective < pa.size(); objective++) {
 //                             dot_pa_ba += (pa.at(objective)*ba.at(objective));
 //                             dot_ba_ba += (ba.at(objective)*ba.at(objective));
@@ -1035,27 +1048,6 @@ void normalization(vector<population>* teams,int number_of_objectives){
             }
         }
     }
-}
-
-void save_team_numbers(vector<population>* teams,int generation,int number_of_rovers, int number_of_routes){
-    for (int population_number = 0 ; population_number < teams->size();population_number++) {
-        teams->at(population_number).path_numbers.clear();
-        for (int team_value = 0 ; team_value < number_of_routes; team_value++) {
-            vector<int> temp_team;
-            for (int rover = 0; rover < number_of_rovers; rover++) {
-                for (int neural_network = 0 ; neural_network < number_of_routes; neural_network++) {
-                    if (team_value == teams->at(population_number).teamRover.at(rover).new_network.at(neural_network).team_number) {
-                        temp_team.push_back(neural_network);
-                        break;
-                    }
-                }
-            }
-            teams->at(population_number).path_numbers.push_back(temp_team);
-            assert(temp_team.size() == number_of_rovers);
-        }
-        assert(teams->at(population_number).path_numbers.size() == number_of_routes);
-    }
-    
 }
 
 void ea(vector<population>* teams){
@@ -2262,10 +2254,9 @@ void print_values_to_file(int generation, vector<population>* teams , int number
                 char buf_1[0x100];
                 snprintf(buf_1, sizeof(buf_1), "/home/ak/Documents/gccProjects/Unicycle/Location_%d_%d_%d.txt", generation,team_number,rover);
                 location_file.open(buf_1);
-                double temp_radius = 1.0;
                 for (int neural = 0 ; neural < teams->at(team_number).teamRover.at(rover).new_network.size(); neural++) {
                     for (int index = 0; index < teams->at(team_number).teamRover.at(rover).new_network.at(neural).x_coordinates.size(); index++) {
-                        location_file<<teams->at(team_number).teamRover.at(rover).new_network.at(neural).team_number<<"\t"<<teams->at(team_number).teamRover.at(rover).new_network.at(neural).x_coordinates.at(index)<<"\t"<<teams->at(team_number).teamRover.at(rover).new_network.at(neural).y_coordinates.at(index)<<"\t"<<temp_radius<<"\n";
+                        location_file<<teams->at(team_number).teamRover.at(rover).new_network.at(neural).team_number<<"\t"<<teams->at(team_number).teamRover.at(rover).new_network.at(neural).x_coordinates.at(index)<<"\t"<<teams->at(team_number).teamRover.at(rover).new_network.at(neural).y_coordinates.at(index)<<"\t"<<teams->at(team_number).teamRover.at(rover).new_network.at(neural).size_of_rover<<"\n";
                     }
                     location_file<<"\n";
                 }
@@ -2528,13 +2519,13 @@ void run_simulation_function(){
     
     int pop_size = 1;
     int number_of_rover = 3;
-    int number_of_routes = 2;
+    int number_of_routes = 20;
     double distance_between_rover = 2.0;
     double safe_distance_between_rover = 1.0;
     double size_of_rover = 0.5;
     int number_of_obstacles = 10;
-    int number_of_objectives = 3;
-    int number_of_poi = 5; 
+    int number_of_poi = 5;
+    int number_of_objectives = 3; 
     // double radius_of_obstacle = 5.0;
     
     //Create teams
@@ -2606,7 +2597,7 @@ void run_simulation_function(){
         initial_team(p_teams, p_coordinates_stat);
         simulation_team(p_teams, p_en_vector, generation, number_of_obstacles, p_coordinates_stat, distance_between_rover,number_of_routes, number_of_rover);
         print_values_to_file(generation, p_teams, number_of_generations, p_en_vector);
-        // distance_team(p_teams, distance_between_rover, safe_distance_between_rover, radius_of_obstacle, p_location_obstacle, number_of_objectives , p_en_vector, size_of_rover);
+        distance_team(p_teams, distance_between_rover, safe_distance_between_rover, p_location_obstacle, number_of_objectives , p_en_vector, size_of_rover);
         // normalization(p_teams, number_of_objectives);
         
         
