@@ -644,7 +644,9 @@ void unicycle_movement(vector<population>* teams, int population_number, int  te
 
         double distance_between = cal_distance(temp_initial_x, temp_initial_y, temp_finial_x, temp_finial_y);
         double velocity = distance_between/max_time_steps;
+        velocity = (velocity > 0.5) ? 0.5: velocity; //maximum velocity is 0.5         
         // teams->at(population_number).teamRover.at(rover)
+        //cout<<velocity<<endl;
         for (int  working_time_step = 0; working_time_step < max_time_steps; working_time_step++)
         {
             double temp_difference_x = temp_finial_x - temp_initial_x;
@@ -2200,6 +2202,10 @@ void hof(vector<population>* teams,int number_of_objectives , int generation_num
 
 }
 
+/*********************************************************************************
+ * All the data to be cleared before start of each simulation
+ * ******************************************************************************/
+
 void clear_teams(vector<population>* teams){
     for (int team_number = 0 ; team_number < teams->size(); team_number++) {
         for (int rover = 0 ; rover < teams->at(team_number).teamRover.size(); rover++) {
@@ -2241,6 +2247,10 @@ void clear_teams(vector<population>* teams){
     }
 }
 
+
+/**************************************************************************************
+ * Prints the values to the file
+ * **********************************************************************************/
 void print_values_to_file(int generation, vector<population>* teams , int number_of_generations, vector<Environment>* p_environment){
 
     if ((generation == 0 )||(generation == (number_of_generations-1)))
@@ -2250,7 +2260,7 @@ void print_values_to_file(int generation, vector<population>* teams , int number
             try {
                 ofstream location_file;
                 char buf_1[0x100];
-                snprintf(buf_1, sizeof(buf_1), "/home/ak/Documents/gccProjects/HOF_flocking_simulation/Data/Development/Location_%d_%d_%d.txt", generation,team_number,rover);
+                snprintf(buf_1, sizeof(buf_1), "/home/ak/Documents/gccProjects/Unicycle/Location_%d_%d_%d.txt", generation,team_number,rover);
                 location_file.open(buf_1);
                 double temp_radius = 1.0;
                 for (int neural = 0 ; neural < teams->at(team_number).teamRover.at(rover).new_network.size(); neural++) {
@@ -2274,7 +2284,7 @@ void print_values_to_file(int generation, vector<population>* teams , int number
     try {
         ofstream location_file_temp;
         char buf_3[0x100];
-        snprintf(buf_3, sizeof(buf_3), "/home/ak/Documents/gccProjects/HOF_flocking_simulation/Data/Development/Environment_obstacles.txt");
+        snprintf(buf_3, sizeof(buf_3), "/home/ak/Documents/gccProjects/Unicycle/Environment_obstacles.txt");
         location_file_temp.open(buf_3);
         for (int count_obstacle = 0 ; count_obstacle < p_environment->at(0).individualObstacles.size(); count_obstacle++) {
             location_file_temp<<p_environment->at(0).individualObstacles.at(count_obstacle).x_location<<"\t"<<p_environment->at(0).individualObstacles.at(count_obstacle).y_location<<"\t"<<p_environment->at(0).individualObstacles.at(count_obstacle).radius<<"\n";
@@ -2291,7 +2301,7 @@ void print_values_to_file(int generation, vector<population>* teams , int number
     try {
         ofstream location_file_temp_1;
         char buf_4[0x100];
-        snprintf(buf_4, sizeof(buf_4), "/home/ak/Documents/gccProjects/HOF_flocking_simulation/Data/Development/Environment_target.txt");
+        snprintf(buf_4, sizeof(buf_4), "/home/ak/Documents/gccProjects/Unicycle/Environment_target.txt");
         location_file_temp_1.open(buf_4);
         for (int count_obstacle = 0 ; count_obstacle < p_environment->at(0).individualPOI.size(); count_obstacle++) {
             location_file_temp_1<<p_environment->at(0).individualPOI.at(count_obstacle).x_position_poi<<"\t"<<p_environment->at(0).individualPOI.at(count_obstacle).y_position_poi<<"\t"<<p_environment->at(0).individualPOI.at(count_obstacle).radius<<"\n";
@@ -2311,7 +2321,7 @@ void print_values_to_file(int generation, vector<population>* teams , int number
             try {
                 ofstream location_file;
                 char buf_1[0x100];
-                snprintf(buf_1, sizeof(buf_1), "/home/ak/Documents/gccProjects/HOF_flocking_simulation/Data/Development/Unicycle_Location_%d_%d_%d.txt", generation,team_number,rover);
+                snprintf(buf_1, sizeof(buf_1), "/home/ak/Documents/gccProjects/Unicycle/Unicycle_Location_%d_%d_%d.txt", generation,team_number,rover);
                 location_file.open(buf_1);
                 double temp_radius = 1.0;
                 for (int neural = 0 ; neural < teams->at(team_number).teamRover.at(rover).new_network.size(); neural++) {
@@ -2366,60 +2376,84 @@ void print_values_to_file(int generation, vector<population>* teams , int number
 }
 
 
+/******************************************************************************
+ * Create obstacles with various radius size
+ * Create point of interests 
+ * ***************************************************************************/
+
 void create_environment( int number_of_obstacles, int number_of_poi, vector<Environment>* p_en_vector){
+    cout<<"Environment start"<<endl;
     // vector<POI> individualPOI;
     // vector<Obstacles> individualObstacles;
     for (int obstacle_count = 0; obstacle_count < number_of_obstacles; obstacle_count++)
     {
-        Obstacles ob;
-        p_en_vector->at(0).individualObstacles.push_back(ob);
         if (obstacle_count == 0)
-        {    
+        {   
+            Obstacles ob;
+            p_en_vector->at(0).individualObstacles.push_back(ob);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 22;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 95;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;            
         }else if (obstacle_count == 1)
         {
+            Obstacles ob;
+            p_en_vector->at(0).individualObstacles.push_back(ob);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 60;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 95;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
         }else if (obstacle_count == 2)
         {
+            Obstacles ob;
+            p_en_vector->at(0).individualObstacles.push_back(ob);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 95;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 60;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
         }else if (obstacle_count == 3)
         {
+            Obstacles ob;
+            p_en_vector->at(0).individualObstacles.push_back(ob);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 95;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 22;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
         }else if (obstacle_count == 4)
         {
+            Obstacles ob;
+            p_en_vector->at(0).individualObstacles.push_back(ob);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 50;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 50;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 12;
         }else if (obstacle_count == 5)
         {
+            Obstacles ob;
+            p_en_vector->at(0).individualObstacles.push_back(ob);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 5;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 25;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
         }else if (obstacle_count == 6)
         {
+            Obstacles ob;
+            p_en_vector->at(0).individualObstacles.push_back(ob);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 60;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 5;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
         }else if (obstacle_count == 7)
         {
+            Obstacles ob;
+            p_en_vector->at(0).individualObstacles.push_back(ob);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 20;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 65;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 12;
         }else if (obstacle_count == 8)
         {
+            Obstacles ob;
+            p_en_vector->at(0).individualObstacles.push_back(ob);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 75;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 65;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 7;
         }else if (obstacle_count == 9)
         {
+            Obstacles ob;
+            p_en_vector->at(0).individualObstacles.push_back(ob);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 30;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 30;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
@@ -2429,30 +2463,39 @@ void create_environment( int number_of_obstacles, int number_of_poi, vector<Envi
 
     for (int target = 0; target < number_of_poi; target++)
     {
-        POI pl;
-        p_en_vector->at(0).individualPOI.push_back(pl);
+        
         if (target == 0)
         {
+            POI pl;
+            p_en_vector->at(0).individualPOI.push_back(pl);
             p_en_vector->at(0).individualPOI.at(target).x_position_poi = 5;
             p_en_vector->at(0).individualPOI.at(target).y_position_poi = 95;
             p_en_vector->at(0).individualPOI.at(target).radius = 3;
         }else if (target == 1)
         {
+            POI pl;
+            p_en_vector->at(0).individualPOI.push_back(pl);
             p_en_vector->at(0).individualPOI.at(target).x_position_poi = 40;
             p_en_vector->at(0).individualPOI.at(target).y_position_poi = 95;
             p_en_vector->at(0).individualPOI.at(target).radius = 3;
         }else if (target == 2)
         {
+            POI pl;
+            p_en_vector->at(0).individualPOI.push_back(pl);
             p_en_vector->at(0).individualPOI.at(target).x_position_poi = 95;
             p_en_vector->at(0).individualPOI.at(target).y_position_poi = 95;
             p_en_vector->at(0).individualPOI.at(target).radius = 3;
         }else if (target == 3)
         {
+            POI pl;
+            p_en_vector->at(0).individualPOI.push_back(pl);
             p_en_vector->at(0).individualPOI.at(target).x_position_poi = 95;
             p_en_vector->at(0).individualPOI.at(target).y_position_poi = 40;
             p_en_vector->at(0).individualPOI.at(target).radius = 3;
         }else if (target == 4)
         {
+            POI pl;
+            p_en_vector->at(0).individualPOI.push_back(pl);
             p_en_vector->at(0).individualPOI.at(target).x_position_poi = 95;
             p_en_vector->at(0).individualPOI.at(target).y_position_poi = 5;
             p_en_vector->at(0).individualPOI.at(target).radius = 3;
@@ -2460,7 +2503,10 @@ void create_environment( int number_of_obstacles, int number_of_poi, vector<Envi
     }
 
     assert(p_en_vector->at(0).individualPOI.size() == number_of_poi);   
+    cout<<"Environment end"<<endl;
 }
+
+
 
 void test_bed(vector<Environment>* p_environment){
     for (int i = 0; i < p_environment->size(); i++)
@@ -2486,9 +2532,9 @@ void run_simulation_function(){
     double distance_between_rover = 2.0;
     double safe_distance_between_rover = 1.0;
     double size_of_rover = 0.5;
-    int number_of_obstacles = 12;
+    int number_of_obstacles = 10;
     int number_of_objectives = 3;
-    int number_of_poi = 7; 
+    int number_of_poi = 5; 
     // double radius_of_obstacle = 5.0;
     
     //Create teams
