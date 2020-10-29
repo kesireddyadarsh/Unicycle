@@ -694,8 +694,8 @@ void unicycle_movement(vector<population>* teams, int population_number, int  te
  *******************************************************/
 
 void simulation_team(vector<population>* teams, vector<Environment>* p_environment,int generation,int number_of_obstacles, vector<vector<double>>* p_stat, double distance_between_rover,int number_of_routes,int number_of_rovers){
-    int max_time_step = 150;
-    cout<<p_environment->size()<<endl;
+    int max_time_step = 2000;
+    //cout<<p_environment->size()<<endl;
     for (int population_number =0 ; population_number< teams->size(); population_number++) {
         for (int team_value = 0 ; team_value < number_of_routes ; team_value++) {
             initial_team(teams, p_stat);
@@ -2488,8 +2488,8 @@ void test_bed(vector<Environment>* p_environment){
 void run_simulation_function(){
     
     int pop_size = 1;
-    int number_of_rover = 3;
-    int number_of_routes = 20;
+    int number_of_rover = 2;
+    int number_of_routes = 10;
     double distance_between_rover = 4.0;
     double safe_distance_between_rover = 2.0;
     double size_of_rover = 0.5;
