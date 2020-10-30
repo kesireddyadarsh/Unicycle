@@ -74,7 +74,8 @@ public:
  ***********************************/
 class Obstacles{
 public:
-    double x_location, y_location, radius;
+    double x_location, y_location;
+    int radius;
     int type_of_obstacle; // 0 -- Circle; 1 -- Rectangle; 2 -- Sqaure; 3 -- Triangle; 4 -- Star
     vector<double> x_location_vec;
     vector<double> y_location_vec;
@@ -815,6 +816,71 @@ bool check_quad(double x_1, double x_2){
  3. Distance to each obstacle
  ********************************************************/
 
+//Below code to check if with in polygon
+
+struct Point {
+   double x, y;
+};
+
+struct line {
+   Point p1, p2;
+};
+
+bool onLine(line l1, Point p) {        //check whether p is on the line or not
+   if(p.x <= max(l1.p1.x, l1.p2.x) && p.x <= min(l1.p1.x, l1.p2.x) &&
+      (p.y <= max(l1.p1.y, l1.p2.y) && p.y <= min(l1.p1.y, l1.p2.y)))
+         return true;
+
+   return false;
+}
+
+int direction(Point a, Point b, Point c) {
+   int val = (b.y-a.y)*(c.x-b.x)-(b.x-a.x)*(c.y-b.y);
+   if (val == 0)
+      return 0;           //colinear
+   else if(val < 0)
+      return 2;          //anti-clockwise direction
+      return 1;          //clockwise direction
+}
+
+bool isIntersect(line l1, line l2) {
+   //four direction for two lines and points of other line
+   int dir1 = direction(l1.p1, l1.p2, l2.p1);
+   int dir2 = direction(l1.p1, l1.p2, l2.p2);
+   int dir3 = direction(l2.p1, l2.p2, l1.p1);
+   int dir4 = direction(l2.p1, l2.p2, l1.p2);
+
+   if(dir1 != dir2 && dir3 != dir4)
+      return true;           //they are intersecting
+   if(dir1==0 && onLine(l1, l2.p1))        //when p2 of line2 are on the line1
+      return true;
+   if(dir2==0 && onLine(l1, l2.p2))         //when p1 of line2 are on the line1
+      return true;
+   if(dir3==0 && onLine(l2, l1.p1))       //when p2 of line1 are on the line2
+      return true;
+   if(dir4==0 && onLine(l2, l1.p2)) //when p1 of line1 are on the line2
+      return true;
+   return false;
+}
+
+bool checkInside(Point poly[], int number_of_sides, Point p) {
+   if(number_of_sides < 3)
+      return false;                  //when polygon has less than 3 edge, it is not polygon
+   line exline = {p, {9999, p.y}};   //create a point at infinity, y is same as point p
+   int count = 0;
+   int i = 0;
+   do {
+      line side = {poly[i], poly[(i+1)%number_of_sides]};     //forming a line from two consecutive points of poly
+      if(isIntersect(side, exline)) {          //if side is intersects exline
+         if(direction(side.p1, p, side.p2) == 0)
+            return onLine(side, p);
+         count++;
+      }
+      i = (i+1)%number_of_sides;
+   } while(i != 0);
+      return count&1;             //when count is odd
+}
+
 void distance_team(vector<population>* teams, double distance_between_rover, double safe_distance_between_rover, vector<vector<double>>* p_location_obstacle,int number_of_objectives,vector<Environment>* p_environment, double size_of_rover){
     for (int population_number = 0 ; population_number < teams->size(); population_number++) {
         for (int team_value = 0 ; team_value < teams->at(population_number).path_numbers.size(); team_value++) {
@@ -845,23 +911,108 @@ void distance_team(vector<population>* teams, double distance_between_rover, dou
                     for (int x = 0; x < teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates.size(); x++) {
                         for (int obstalce_count = 0; obstalce_count < p_environment->at(0).individualObstacles.size(); obstalce_count++)
                         {
-                            double temp_cal_distance = cal_distance(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates.at(x), teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).y_coordinates.at(x),p_environment->at(0).individualObstacles.at(obstalce_count).x_location,p_environment->at(0).individualObstacles.at(obstalce_count).y_location);
-                            if (temp_cal_distance < p_environment->at(0).individualObstacles.at(obstalce_count).radius)
+                            double number_of_sides = p_environment->at(0).individualObstacles.at(obstalce_count).radius;
+                            if (number_of_sides == 3)
                             {
-                                teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_obstacle += 1000;
-                            }       
+                                double temp_x_1 = p_environment->at(0).individualObstacles.at(obstalce_count).x_location_vec.at(0);
+                                double temp_y_1 = p_environment->at(0).individualObstacles.at(obstalce_count).y_location_vec.at(0);
+                                double temp_x_2 = p_environment->at(0).individualObstacles.at(obstalce_count).x_location_vec.at(1);
+                                double temp_y_2 = p_environment->at(0).individualObstacles.at(obstalce_count).y_location_vec.at(1);
+                                double temp_x_3 = p_environment->at(0).individualObstacles.at(obstalce_count).x_location_vec.at(2);
+                                double temp_y_3 = p_environment->at(0).individualObstacles.at(obstalce_count).y_location_vec.at(2);
+
+                                Point polygon[] = {{temp_x_1, temp_y_1}, {temp_x_2, temp_y_2}, {temp_x_3, temp_y_3}};
+                                Point p = {teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates.at(x), teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).y_coordinates.at(x)};
+                            
+                                if (checkInside(polygon, number_of_sides, p))
+                                {
+                                    teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_obstacle += 1000;
+                                } 
+                            }else
+                            {
+                                double temp_x_1 = p_environment->at(0).individualObstacles.at(obstalce_count).x_location_vec.at(0);
+                                double temp_y_1 = p_environment->at(0).individualObstacles.at(obstalce_count).y_location_vec.at(0);
+                                double temp_x_2 = p_environment->at(0).individualObstacles.at(obstalce_count).x_location_vec.at(1);
+                                double temp_y_2 = p_environment->at(0).individualObstacles.at(obstalce_count).y_location_vec.at(1);
+                                double temp_x_3 = p_environment->at(0).individualObstacles.at(obstalce_count).x_location_vec.at(2);
+                                double temp_y_3 = p_environment->at(0).individualObstacles.at(obstalce_count).y_location_vec.at(2);
+                                double temp_x_4 = p_environment->at(0).individualObstacles.at(obstalce_count).x_location_vec.at(3);
+                                double temp_y_4 = p_environment->at(0).individualObstacles.at(obstalce_count).y_location_vec.at(3);
+                                Point polygon[] = {{temp_x_1, temp_y_1}, {temp_x_2, temp_y_2}, {temp_x_3, temp_y_3}, {temp_x_4, temp_y_4}};
+                                Point p = {teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates.at(x), teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).y_coordinates.at(x)};
+                            
+                                if (checkInside(polygon, number_of_sides, p))
+                                {
+                                    teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_obstacle += 1000;
+                                } 
+                            }      
+                        }
+                        if(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates.at(x) < -2){
+                            teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_obstacle += 1000;
+                        }
+                        if(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).y_coordinates.at(x) < -2){
+                            teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_obstacle += 1000;
+                        }
+                        if(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates.at(x) > 150){
+                            teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_obstacle += 1000;
+                        }
+                        if(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).y_coordinates.at(x) > 150){
+                            teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_obstacle += 1000;
                         }
                     }
 
                     //unicycle
                     for (int x = 0; x < teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates_unicycle.size(); x++) {
+                                                
                         for (int obstalce_count = 0; obstalce_count < p_environment->at(0).individualObstacles.size(); obstalce_count++)
                         {
-                            double temp_cal_distance = cal_distance(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates_unicycle.at(x), teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).y_coordinates_unicycle.at(x),p_environment->at(0).individualObstacles.at(obstalce_count).x_location,p_environment->at(0).individualObstacles.at(obstalce_count).y_location);
-                            if (temp_cal_distance < p_environment->at(0).individualObstacles.at(obstalce_count).radius)
+                            double number_of_sides = p_environment->at(0).individualObstacles.at(obstalce_count).radius;
+                            if (number_of_sides == 3)
                             {
-                                teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_obstacle += 1000;
-                            } 
+                                double temp_x_1 = p_environment->at(0).individualObstacles.at(obstalce_count).x_location_vec.at(0);
+                                double temp_y_1 = p_environment->at(0).individualObstacles.at(obstalce_count).y_location_vec.at(0);
+                                double temp_x_2 = p_environment->at(0).individualObstacles.at(obstalce_count).x_location_vec.at(1);
+                                double temp_y_2 = p_environment->at(0).individualObstacles.at(obstalce_count).y_location_vec.at(1);
+                                double temp_x_3 = p_environment->at(0).individualObstacles.at(obstalce_count).x_location_vec.at(2);
+                                double temp_y_3 = p_environment->at(0).individualObstacles.at(obstalce_count).y_location_vec.at(2);
+
+                                Point polygon[] = {{temp_x_1, temp_y_1}, {temp_x_2, temp_y_2}, {temp_x_3, temp_y_3}};
+                                Point p = {teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates_unicycle.at(x), teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).y_coordinates_unicycle.at(x)};
+                            
+                                if (checkInside(polygon, number_of_sides, p))
+                                {
+                                    teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_obstacle += 1000;
+                                } 
+                            }else
+                            {
+                                double temp_x_1 = p_environment->at(0).individualObstacles.at(obstalce_count).x_location_vec.at(0);
+                                double temp_y_1 = p_environment->at(0).individualObstacles.at(obstalce_count).y_location_vec.at(0);
+                                double temp_x_2 = p_environment->at(0).individualObstacles.at(obstalce_count).x_location_vec.at(1);
+                                double temp_y_2 = p_environment->at(0).individualObstacles.at(obstalce_count).y_location_vec.at(1);
+                                double temp_x_3 = p_environment->at(0).individualObstacles.at(obstalce_count).x_location_vec.at(2);
+                                double temp_y_3 = p_environment->at(0).individualObstacles.at(obstalce_count).y_location_vec.at(2);
+                                double temp_x_4 = p_environment->at(0).individualObstacles.at(obstalce_count).x_location_vec.at(3);
+                                double temp_y_4 = p_environment->at(0).individualObstacles.at(obstalce_count).y_location_vec.at(3);
+                                Point polygon[] = {{temp_x_1, temp_y_1}, {temp_x_2, temp_y_2}, {temp_x_3, temp_y_3}, {temp_x_4, temp_y_4}};
+                                Point p = {teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates_unicycle.at(x), teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).y_coordinates_unicycle.at(x)};
+                            
+                                if (checkInside(polygon, number_of_sides, p))
+                                {
+                                    teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_obstacle += 1000;
+                                } 
+                            }
+                        }
+                        if(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates_unicycle.at(x) < -2){
+                            teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_obstacle += 1000;
+                        }
+                        if(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).y_coordinates_unicycle.at(x) < -2){
+                            teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_obstacle += 1000;
+                        }
+                        if(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates_unicycle.at(x) > 150){
+                            teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_obstacle += 1000;
+                        }
+                        if(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).y_coordinates_unicycle.at(x) > 150){
+                            teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).hitting_obstacle += 1000;
                         }
                     }
                 }
@@ -2208,13 +2359,24 @@ void clear_teams(vector<population>* teams){
     }
 }
 
-
 /**************************************************************************************
  * Prints the values to the file
  * **********************************************************************************/
 void print_values_to_file(int generation, vector<population>* teams , int number_of_generations, vector<Environment>* p_environment){
 
-    if ((generation == 0 )||(generation == (number_of_generations-1)))
+    bool print_to_file_flag = false;
+    if (generation == 0)
+    {
+        print_to_file_flag = true;
+    }else if (generation == (number_of_generations -1))
+    {
+        print_to_file_flag = true;
+    }else if (generation%10 == 0)
+    {
+        print_to_file_flag = true;
+    }
+
+    if (print_to_file_flag)
     {
         for (int team_number = 0 ; team_number < teams->size(); team_number++) {
         for (int rover = 0 ; rover < teams->at(team_number).teamRover.size(); rover++) {
@@ -2305,7 +2467,7 @@ void print_values_to_file(int generation, vector<population>* teams , int number
     try {
         ofstream reward_file;
         char buf_2[0x100];
-        snprintf(buf_2, sizeof(buf_2), "/home/ak/Documents/gccProjects/HOF_flocking_simulation/Data/Development/rewards_%d.txt", generation);
+        snprintf(buf_2, sizeof(buf_2), "/home/ak/Documents/gccProjects/Unicycle/rewards_%d.txt", generation);
         reward_file.open(buf_2);
         reward_file.exceptions(std::ifstream::failbit);
         for (int team_number = 0 ; team_number < teams->size(); team_number++) {
@@ -2335,7 +2497,6 @@ void print_values_to_file(int generation, vector<population>* teams , int number
 
 }
 
-
 /******************************************************************************
  * Create obstacles with various radius size
  * Create point of interests 
@@ -2353,7 +2514,7 @@ void create_environment( int number_of_obstacles, int number_of_poi, vector<Envi
             p_en_vector->at(0).individualObstacles.push_back(ob);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 22;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 95;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 3;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location_vec.push_back(22);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location_vec.push_back(100);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location_vec.push_back(27);
@@ -2366,7 +2527,7 @@ void create_environment( int number_of_obstacles, int number_of_poi, vector<Envi
             p_en_vector->at(0).individualObstacles.push_back(ob);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 60;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 95;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 2;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location_vec.push_back(65);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location_vec.push_back(100);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location_vec.push_back(65);
@@ -2381,7 +2542,7 @@ void create_environment( int number_of_obstacles, int number_of_poi, vector<Envi
             p_en_vector->at(0).individualObstacles.push_back(ob);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 95;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 60;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 2;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location_vec.push_back(100);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location_vec.push_back(65);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location_vec.push_back(100);
@@ -2396,7 +2557,7 @@ void create_environment( int number_of_obstacles, int number_of_poi, vector<Envi
             p_en_vector->at(0).individualObstacles.push_back(ob);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 95;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 22;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 3;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location_vec.push_back(95);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location_vec.push_back(27);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location_vec.push_back(100);
@@ -2409,7 +2570,7 @@ void create_environment( int number_of_obstacles, int number_of_poi, vector<Envi
             p_en_vector->at(0).individualObstacles.push_back(ob);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 50;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 50;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 12;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 1;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location_vec.push_back(55);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location_vec.push_back(55);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location_vec.push_back(60);
@@ -2424,7 +2585,7 @@ void create_environment( int number_of_obstacles, int number_of_poi, vector<Envi
             p_en_vector->at(0).individualObstacles.push_back(ob);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 5;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 25;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 3;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location_vec.push_back(5);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location_vec.push_back(30);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location_vec.push_back(10);
@@ -2437,7 +2598,7 @@ void create_environment( int number_of_obstacles, int number_of_poi, vector<Envi
             p_en_vector->at(0).individualObstacles.push_back(ob);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 60;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 5;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 3;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location_vec.push_back(60);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location_vec.push_back(10);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location_vec.push_back(65);
@@ -2450,7 +2611,7 @@ void create_environment( int number_of_obstacles, int number_of_poi, vector<Envi
             p_en_vector->at(0).individualObstacles.push_back(ob);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 20;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 65;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 12;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 3;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location_vec.push_back(20);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location_vec.push_back(70);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location_vec.push_back(25);
@@ -2463,7 +2624,7 @@ void create_environment( int number_of_obstacles, int number_of_poi, vector<Envi
             p_en_vector->at(0).individualObstacles.push_back(ob);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 75;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 65;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 7;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 2;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location_vec.push_back(80);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location_vec.push_back(70);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location_vec.push_back(80);
@@ -2478,7 +2639,7 @@ void create_environment( int number_of_obstacles, int number_of_poi, vector<Envi
             p_en_vector->at(0).individualObstacles.push_back(ob);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 30;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 30;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 2;
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location_vec.push_back(35);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location_vec.push_back(35);
             p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location_vec.push_back(35);
@@ -2534,20 +2695,6 @@ void create_environment( int number_of_obstacles, int number_of_poi, vector<Envi
 
     assert(p_en_vector->at(0).individualPOI.size() == number_of_poi);   
     cout<<"Environment end"<<endl;
-}
-
-
-
-void test_bed(vector<Environment>* p_environment){
-    for (int i = 0; i < p_environment->size(); i++)
-    {
-        for (int  j = 0; j < p_environment->at(i).individualObstacles.size(); j++)
-        {
-            cout<<"Working"<<endl;
-        }
-        
-    }
-    
 }
 
 /****************************************************************************
