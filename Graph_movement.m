@@ -2,9 +2,9 @@ clear all;
 clc;
 close all;
 
-read_1 = importdata('/home/ak/Documents/gccProjects/Unicycle/Location_2999_0_0.txt');
-read_2 = importdata('/home/ak/Documents/gccProjects/Unicycle/Location_2999_0_1.txt');
-read_3 = importdata('/home/ak/Documents/gccProjects/Unicycle/Location_2999_0_2.txt');
+read_1 = importdata('/home/ak/Documents/gccProjects/Unicycle/Location_1600_0_0.txt');
+read_2 = importdata('/home/ak/Documents/gccProjects/Unicycle/Location_1600_0_1.txt');
+read_3 = importdata('/home/ak/Documents/gccProjects/Unicycle/Location_1600_0_2.txt');
 
 time_step = 2000;
 data_1 = zeros(time_step, 3);

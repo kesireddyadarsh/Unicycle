@@ -695,7 +695,7 @@ void unicycle_movement(vector<population>* teams, int population_number, int  te
  *******************************************************/
 
 void simulation_team(vector<population>* teams, vector<Environment>* p_environment,int generation,int number_of_obstacles, vector<vector<double>>* p_stat, double distance_between_rover,int number_of_routes,int number_of_rovers){
-    int max_time_step = 2000;
+    int max_time_step = 200;
     //cout<<p_environment->size()<<endl;
     for (int population_number =0 ; population_number< teams->size(); population_number++) {
         for (int team_value = 0 ; team_value < number_of_routes ; team_value++) {
@@ -838,7 +838,14 @@ void distance_team(vector<population>* teams, double distance_between_rover, dou
                     {
                         teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).target_distance.push_back(cal_distance(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).x_coordinates.at(index),teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).y_coordinates.at(index), p_environment->at(0).individualPOI.at(count_target).x_position_poi, p_environment->at(0).individualPOI.at(count_target).y_position_poi));
                     }
-                    teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).shortest_target_distance += *std::min_element(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).target_distance.begin(), teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).target_distance.end());                
+                    double temp_value_stored = *std::min_element(teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).target_distance.begin(), teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).target_distance.end());
+                    if (temp_value_stored > 1)
+                    {
+                        temp_value_stored += 10000;
+                    }
+
+                    teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).shortest_target_distance += temp_value_stored;
+                    teams->at(population_number).teamRover.at(rover).new_network.at(teams->at(population_number).path_numbers.at(team_value).at(rover)).target_distance.clear();
                 }
                 
                 //each obstacle distance
@@ -2504,7 +2511,6 @@ void create_environment( int number_of_obstacles, int number_of_poi, vector<Envi
     assert(p_en_vector->at(0).individualPOI.size() == number_of_poi);   
     cout<<"Environment end"<<endl;
 }
-
 
 
 void test_bed(vector<Environment>* p_environment){
