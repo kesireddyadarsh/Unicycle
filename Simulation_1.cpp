@@ -2397,72 +2397,102 @@ void create_environment( int number_of_obstacles, int number_of_poi, vector<Envi
         {   
             Obstacles ob;
             p_en_vector->at(0).individualObstacles.push_back(ob);
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 22;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 95;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;            
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 0;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 0;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 1;  
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 22;
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 95;
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;            
         }else if (obstacle_count == 1)
         {
             Obstacles ob;
             p_en_vector->at(0).individualObstacles.push_back(ob);
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 60;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 95;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 0;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 0;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 1;  
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 60;
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 95;
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
         }else if (obstacle_count == 2)
         {
             Obstacles ob;
             p_en_vector->at(0).individualObstacles.push_back(ob);
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 95;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 60;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 0;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 0;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 1;  
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 95;
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 60;
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
         }else if (obstacle_count == 3)
         {
             Obstacles ob;
             p_en_vector->at(0).individualObstacles.push_back(ob);
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 95;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 22;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 0;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 0;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 1;  
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 95;
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 22;
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
         }else if (obstacle_count == 4)
         {
             Obstacles ob;
             p_en_vector->at(0).individualObstacles.push_back(ob);
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 50;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 50;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 12;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 0;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 0;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 1;
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 50;
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 50;
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 12;
         }else if (obstacle_count == 5)
         {
             Obstacles ob;
             p_en_vector->at(0).individualObstacles.push_back(ob);
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 5;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 25;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 0;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 0;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 1;  
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 5;
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 25;
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
         }else if (obstacle_count == 6)
         {
             Obstacles ob;
             p_en_vector->at(0).individualObstacles.push_back(ob);
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 60;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 5;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 0;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 0;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 1;  
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 60;
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 5;
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
         }else if (obstacle_count == 7)
         {
             Obstacles ob;
             p_en_vector->at(0).individualObstacles.push_back(ob);
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 20;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 65;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 12;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 0;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 0;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 1;  
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 20;
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 65;
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
         }else if (obstacle_count == 8)
         {
             Obstacles ob;
             p_en_vector->at(0).individualObstacles.push_back(ob);
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 75;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 65;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 7;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 0;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 0;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 1;
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 75;
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 65;
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 7;
         }else if (obstacle_count == 9)
         {
             Obstacles ob;
             p_en_vector->at(0).individualObstacles.push_back(ob);
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 30;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 30;
-            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 0;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 0;
+            p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 2;
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).x_location = 30;
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).y_location = 30;
+            // p_en_vector->at(0).individualObstacles.at(obstacle_count).radius = 5;
         }
     }
     assert(p_en_vector->at(0).individualObstacles.size() == number_of_obstacles);
@@ -2535,7 +2565,7 @@ void run_simulation_function(){
     int number_of_rover = 3;
     int number_of_routes = 10;
     double distance_between_rover = 4.0;
-    double safe_distance_between_rover = 2.0;
+    double safe_distance_between_rover = 1.0;
     double size_of_rover = 0.5;
     int number_of_obstacles = 10;
     int number_of_poi = 5;
