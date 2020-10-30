@@ -2,15 +2,15 @@ clear all;
 clc;
 close all;
 
-read_1 = importdata('/home/ak/Documents/gccProjects/Teleporting/Unicycle/Location_9999_0_0.txt');
-read_2 = importdata('/home/ak/Documents/gccProjects/Teleporting/Unicycle/Location_9999_0_1.txt');
-read_3 = importdata('/home/ak/Documents/gccProjects/Teleporting/Unicycle/Location_9999_0_2.txt');
+read_1 = importdata('/home/ak/Documents/gccProjects/Unicycle/Location_2100_0_0.txt');
+read_2 = importdata('/home/ak/Documents/gccProjects/Unicycle/Location_2100_0_1.txt');
+read_3 = importdata('/home/ak/Documents/gccProjects/Unicycle/Location_2100_0_2.txt');
 
-time_step = 30;
+time_step = 2000;
 data_1 = zeros(time_step, 3);
 data_2 = zeros(time_step, 3);
 data_3 = zeros(time_step, 3);
-team_number = 16;
+team_number = 4;
 loop_number = 1;
 for temp = 1:size(read_1)
   if read_1(temp,1) == team_number
@@ -44,19 +44,19 @@ endfor
 
 axh = axes();
 hold(axh,'on');
-axis([-2 12 -2 12]);
-for i = 1:10
-  %scatter(data_1(i,2),data_1(i,3),300,'r','filled','d')
-  plot(data_1(i,2),data_1(i,3),300,'r')
+%axis([-2 500 -2 12]);
+%for i = 1:size(data_1)
+  scatter(data_1(:,2),data_1(:,3),300,'r','filled','d')
+  %plot(data_1(i,2),data_1(i,3),300,'r')
   %pause(0.5)
-  %scatter(data_2(i,2),data_2(i,3),300,'b','filled','d')
-  plot(data_2(i,2),data_2(i,3),300,'b')
+  scatter(data_2(:,2),data_2(:,3),300,'b','filled','d')
+  %plot(data_2(i,2),data_2(i,3),300,'b')
   %pause(0.5)
-  %scatter(data_3(i,2),data_3(i,3),300,'g','filled','d')
-  plot(data_3(i,2),data_3(i,3),300,'g')
-  drawnow;
+  scatter(data_3(:,2),data_3(:,3),300,'g','filled','d')
+  %plot(data_3(i,2),data_3(i,3),300,'g')
+  %drawnow;
   %pause(0.5)
-endfor
+%endfor
 %line1 = scatter(axh,data_1(:,2), data_1(:,3),'-','Color','r');
 %marker1 = plot(axh,2,0,'o','Color','r');
 %disp(team_number)
